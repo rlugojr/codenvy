@@ -28,6 +28,7 @@
     <packaging>pom</packaging>
     <name>Onpremises :: Parent</name>
     <modules>
+        <module>lib</module>
         <module>core</module>
         <module>plugins</module>
         <module>dashboard</module>
@@ -45,6 +46,7 @@
     <properties>
         <che.version>4.3.0-RC1-SNAPSHOT</che.version>
         <codenvy.analytics.version>3.13.4</codenvy.analytics.version>
+        <codenvy.lib.version>4.3.0-RC1-SNAPSHOT</codenvy.lib.version>
         <com.braintreepayments.gateway.version>2.39.2</com.braintreepayments.gateway.version>
         <com.codahale.metrics.version>3.0.2</com.codahale.metrics.version>
         <com.dumbster.version>1.6</com.dumbster.version>
@@ -306,6 +308,20 @@
                 <artifactId>update-server-packaging-war</artifactId>
                 <version>${project.version}</version>
                 <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>com.codenvy.lib</groupId>
+                <artifactId>codenvy-websocket-terminal</artifactId>
+                <version>${codenvy.lib.version}</version>
+                <type>zip</type>
+                <classifier>linux_amd64</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.codenvy.lib</groupId>
+                <artifactId>codenvy-websocket-terminal</artifactId>
+                <version>${codenvy.lib.version}</version>
+                <type>zip</type>
+                <classifier>linux_arm7</classifier>
             </dependency>
             <dependency>
                 <groupId>com.codenvy.onpremises</groupId>
