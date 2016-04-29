@@ -15,13 +15,11 @@
  */
 var AT = new function () {
 
-    var restContext;
-    var wsId;
-    var timeout_interval = 1000;
+    var url;
+    var timeout_interval = 10000;
 
-    this.init = function (restContext, workspace) {
-        this.restContext = restContext;
-        this.wsId = workspace;
+    this.init = function (restContext, workspaceId) {
+        this.url = restContext + "/activity/" + workspaceId;
         document.addEventListener("mousemove", AT.handleMouseMove);
     };
 
@@ -32,19 +30,18 @@ var AT = new function () {
         } else {
             request = new ActiveXObject("Microsoft.XMLHTTP");
         }
-        var url = AT.restContext + "/activity/" + AT.wsId;
 
         request.onreadystatechange = function () {
             if (request.readyState == 4 && request.status == 204) {
-                document.addEventListener("mousemove", AT.handleMouseMove);
+                setTimeout(function() {document.addEventListener("mousemove", AT.handleMouseMove);}, timeout_interval);
             }
         };
-        request.open("PUT", url, true);
+        request.open("PUT", AT.url, true);
         request.send();
     };
 
     this.handleMouseMove = function(e) {
         document.removeEventListener("mousemove", AT.handleMouseMove);
-        setTimeout(AT.sendRequest, timeout_interval);
+        AT.sendRequest();
     };
 };
