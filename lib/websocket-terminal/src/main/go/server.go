@@ -138,17 +138,6 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 		Data json.RawMessage `json:"data"`
 	}
 
-	ticker := time.NewTicker(time.Minute)
-	go func() {
-		for _ = range ticker.C {
-			if active {
-				makeActivityRequest()
-				active = false
-			}
-
-			log.Print("Scheduled call\n")
-		}
-	}()
 	// read from the web socket, copying to the pty master
 	// messages are expected to be text and base64 encoded
 	for {
@@ -245,4 +234,18 @@ func main() {
 	if err != nil {
 		log.Fatalf("net.http could not listen on address '%s': %s\n", addrFlag, err)
 	}
+
+	ticker := time.NewTicker(time.Minute)
+	defer ticker.Stop()
+	go func() {
+		for _ = range ticker.C {
+			if active {
+				makeActivityRequest()
+				active = false
+			}
+
+			log.Print("Scheduled call\n")
+		}
+	}()
+
 }
