@@ -115,7 +115,7 @@ public class RecipeDaoImpl implements RecipeDao {
         if (!recipe.getTags().isEmpty()) {
             dbUpdate.append("tags", asDBList(recipe.getTags()));
         }
-        if (!recipe.getAcl().isEmpty()) {
+        if (recipe.getAcl() != null && !recipe.getAcl().isEmpty()) {
             dbUpdate.append("acl", asDBList(recipe.getAcl()));
         }
 

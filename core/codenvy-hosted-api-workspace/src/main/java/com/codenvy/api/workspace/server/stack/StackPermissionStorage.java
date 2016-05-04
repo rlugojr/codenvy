@@ -96,12 +96,11 @@ public class StackPermissionStorage implements PermissionsStorage {
             return false;
         }
 
-        final Set<String> allowedActions = recipe.getAcl()
-                                                 .stream()
-                                                 .filter(entry -> entry.getUser().equals(user) || entry.getUser().equals("*"))
-                                                 .flatMap(entry -> entry.getActions().stream())
-                                                 .collect(Collectors.toSet());
-        return allowedActions.contains(action);
+        return recipe.getAcl()
+                     .stream()
+                     .filter(entry -> entry.getUser().equals(user) || entry.getUser().equals("*"))
+                     .flatMap(entry -> entry.getActions().stream())
+                     .anyMatch(action::equals);
 
     }
 

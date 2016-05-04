@@ -55,9 +55,12 @@ public class RecipeImplCodec implements Codec<RecipeImpl> {
         @SuppressWarnings("unchecked")//acl is always list of strings
         final List<Document> aclDocument = (List<Document>)document.get("acl");
 
-        List<AclEntryImpl> aclEntries = aclDocument.stream()
-                                                   .map(aclEntryCodec::decode)
-                                                   .collect(toList());
+        List<AclEntryImpl> aclEntries = null;
+        if (aclDocument != null) {
+            aclEntries = aclDocument.stream()
+                                    .map(aclEntryCodec::decode)
+                                    .collect(toList());
+        }
 
         return new RecipeImpl().withId(document.getString("_id"))
                                .withName(document.getString("name"))
@@ -75,10 +78,12 @@ public class RecipeImplCodec implements Codec<RecipeImpl> {
                                                 .append("creator", recipe.getCreator())
                                                 .append("script", recipe.getScript())
                                                 .append("type", recipe.getType())
-                                                .append("tags", recipe.getTags())
-                                                .append("acl", recipe.getAcl().stream()
-                                                                     .map(aclEntryCodec::encode)
-                                                                     .collect(Collectors.toList()));
+                                                .append("tags", recipe.getTags());
+        if (recipe.getAcl() != null) {
+            document.append("acl", recipe.getAcl().stream()
+                                         .map(aclEntryCodec::encode)
+                                         .collect(Collectors.toList()));
+        }
 
         codec.encode(writer, document, encoderContext);
     }
