@@ -31,16 +31,13 @@ import (
 	"bufio"
 	"bytes"
 	"unicode/utf8"
-	"time"
 )
 
-const threshold int64 = 60
+
 
 var addrFlag, cmdFlag, staticFlag string
 
-var active bool
-
-var lastUpdateTime int64
+const threshold int64 = 60
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1,
@@ -54,6 +51,8 @@ type wsPty struct {
 	Cmd *exec.Cmd // pty builds on os.exec
 	Pty *os.File  // a pty is simply an os.File
 }
+
+
 
 func (wp *wsPty) Start() {
 	var err error
@@ -166,7 +165,7 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 					log.Printf("Invalid resize message: %s\n", err);
 				} else{
 					pty.Setsize(wp.Pty,uint16(size[1]), uint16(size[0]));
-					notifyActivity();
+					NotifyActivity();
 				}
 
 			case "data" :
@@ -176,7 +175,7 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 					log.Printf("Invalid data message %s\n", err);
 				} else{
 					wp.Pty.Write([]byte(dat));
-					notifyActivity();
+					NotifyActivity();
 				}
 
 			default:
@@ -193,26 +192,7 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 	wp.Stop()
 }
 
-func notifyActivity() {
-	t := time.Now().Unix()
-	if t < (lastUpdateTime + threshold) {
-		active = true
-	} else {
-		log.Print("Direct call\n")
-		makeActivityRequest()
-		lastUpdateTime = t
-	}
-}
 
-func makeActivityRequest() {
-	req, _ := http.NewRequest(http.MethodPut ,os.Getenv("CHE_API_ENDPOINT") + "/activity/" + os.Getenv("CHE_WORKSPACE_ID"), nil)
-	client := &http.Client{}
-	_, err := client.Do(req)
-
-	if err != nil {
-		log.Printf("Failed to notify user activity in terminal: %s\n", err)
-	}
-}
 
 func init() {
 	cwd, _ := os.Getwd()
@@ -234,18 +214,5 @@ func main() {
 	if err != nil {
 		log.Fatalf("net.http could not listen on address '%s': %s\n", addrFlag, err)
 	}
-
-	ticker := time.NewTicker(time.Minute)
-	defer ticker.Stop()
-	go func() {
-		for _ = range ticker.C {
-			if active {
-				makeActivityRequest()
-				active = false
-			}
-
-			log.Print("Scheduled call\n")
-		}
-	}()
-
+	go StartScheduledCheck()
 }
