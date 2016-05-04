@@ -21,6 +21,9 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
 
+import org.eclipse.che.ApiEndpointProvider;
+import org.eclipse.che.EventBusURLProvider;
+import org.eclipse.che.UserTokenProvider;
 import org.eclipse.che.api.auth.oauth.OAuthTokenProvider;
 import org.eclipse.che.api.core.notification.WSocketEventBusClient;
 import org.eclipse.che.api.core.rest.ApiInfoService;
@@ -35,16 +38,16 @@ import org.eclipse.che.api.user.server.dao.PreferenceDao;
 import org.eclipse.che.api.vfs.VirtualFileSystemModule;
 import org.eclipse.che.commons.lang.Pair;
 import org.eclipse.che.everrest.CheAsynchronousJobPool;
-import org.eclipse.che.generator.archetype.ArchetypeGenerator;
-import org.eclipse.che.generator.archetype.ArchetypeGeneratorModule;
 import org.eclipse.che.git.impl.nativegit.LocalGitUserResolver;
 import org.eclipse.che.git.impl.nativegit.NativeGitConnectionFactory;
 import org.eclipse.che.ide.ext.java.jdi.server.JavaDebuggerService;
 import org.eclipse.che.ide.ext.microsoft.server.inject.MicrosoftModule;
-import org.eclipse.che.ide.extension.maven.server.inject.MavenModule;
 import org.eclipse.che.ide.gdb.server.GdbDebuggerService;
 import org.eclipse.che.inject.DynaModule;
 import org.eclipse.che.plugin.github.server.inject.GitHubModule;
+import org.eclipse.che.plugin.maven.generator.archetype.ArchetypeGenerator;
+import org.eclipse.che.plugin.maven.generator.archetype.ArchetypeGeneratorModule;
+import org.eclipse.che.plugin.maven.server.inject.MavenModule;
 import org.eclipse.che.security.oauth.RemoteOAuthTokenProvider;
 import org.everrest.core.impl.async.AsynchronousJobPool;
 import org.everrest.core.impl.async.AsynchronousJobService;
@@ -104,7 +107,7 @@ public class MachineModule extends AbstractModule {
                       .to("/site/error/error-cookies-disabled");
         bindConstant().annotatedWith(Names.named("auth.sso.login_page_url")).to("/site/login");
 
-        bind(PreferenceDao.class).to(org.eclipse.che.api.local.RemotePreferenceDao.class);
+        bind(PreferenceDao.class).to(org.eclipse.che.RemotePreferenceDao.class);
 
         bind(WSocketEventBusClient.class).asEagerSingleton();
 

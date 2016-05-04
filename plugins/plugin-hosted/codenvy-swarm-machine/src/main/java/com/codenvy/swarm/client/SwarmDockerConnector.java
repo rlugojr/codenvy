@@ -15,7 +15,6 @@
 package com.codenvy.swarm.client;
 
 import com.codenvy.swarm.client.json.DockerNode;
-import com.codenvy.swarm.client.json.SwarmContainerInfo;
 import com.google.common.base.Strings;
 
 import org.eclipse.che.commons.json.JsonHelper;
@@ -30,6 +29,7 @@ import org.eclipse.che.plugin.docker.client.connection.DockerResponse;
 import org.eclipse.che.plugin.docker.client.dto.AuthConfigs;
 import org.eclipse.che.plugin.docker.client.json.ContainerConfig;
 import org.eclipse.che.plugin.docker.client.json.ContainerCreated;
+import org.eclipse.che.plugin.docker.client.json.ContainerInfo;
 import org.eclipse.che.plugin.docker.client.json.SystemInfo;
 
 import javax.inject.Inject;
@@ -84,7 +84,7 @@ public class SwarmDockerConnector extends DockerConnector {
      * Overrides method to return container info extended with swarm information about docker node.
      */
     @Override
-    protected SwarmContainerInfo doInspectContainer(String container, URI dockerDaemonUri) throws IOException {
+    protected ContainerInfo doInspectContainer(String container, URI dockerDaemonUri) throws IOException {
         try (final DockerConnection connection = connectionFactory.openConnection(dockerDaemonUri)
                                                                   .method("GET")
                                                                   .path("/containers/" + container + "/json")) {
@@ -93,7 +93,7 @@ public class SwarmDockerConnector extends DockerConnector {
             if (HttpURLConnection.HTTP_OK != status) {
                 throw getDockerException(response);
             }
-            return JsonHelper.fromJson(response.getInputStream(), SwarmContainerInfo.class, null, FIRST_LETTER_LOWERCASE);
+            return JsonHelper.fromJson(response.getInputStream(), ContainerInfo.class, null, FIRST_LETTER_LOWERCASE);
         } catch (JsonParseException e) {
             throw new IOException(e.getMessage(), e);
         }

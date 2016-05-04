@@ -63,7 +63,7 @@ EXT_HOST_PORT=$([[ "$NETWORK_PORTS" =~ $EXT_HOST_PORT_REGEX ]] && echo ${BASH_RE
 HOST_URL_FOR_PROJECT="${HOST_URL}:${EXT_HOST_PORT}"
 
 # create project "project-1" of type "console-java" in workspace "workspace-1"
-doPost "application/json" "{\"location\":\"https://github.com/che-samples/console-java-simple.git\",\"parameters\":{},\"type\":\"git\"}" "http://${HOST_URL_FOR_PROJECT}/api/ext/project/${WORKSPACE_ID}/import/project-1?token=${TOKEN}"
+doPost "application/json" "{\"location\":\"https://github.com/che-samples/console-java-simple.git\",\"parameters\":{},\"type\":\"git\"}" "http://${HOST_URL_FOR_PROJECT}/wsagent/ext/project/${WORKSPACE_ID}/import/project-1?token=${TOKEN}"
 
 doGet "http://${HOST_URL}/api/workspace/${WORKSPACE_ID}?token=${TOKEN}"
 validateExpectedString ".*\"status\":\"RUNNING\".*"
