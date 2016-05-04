@@ -21,24 +21,13 @@
         <artifactId>onpremises-assembly-parent</artifactId>
         <groupId>com.codenvy.onpremises</groupId>
         <version>4.3.0-RC1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
-    <groupId>com.codenvy.plugin</groupId>
-    <artifactId>codenvy-plugin-parent</artifactId>
+    <groupId>com.codenvy.lib</groupId>
+    <artifactId>codenvy-lib-parent</artifactId>
     <version>4.3.0-RC1-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Codenvy Plugin Parent</name>
+    <name>Codenvy Lib :: Parent</name>
     <modules>
-        <module>plugin-google</module>
-        <module>plugin-wso2</module>
-        <module>plugin-projectlocker</module>
-        <module>plugin-pullrequest</module>
-        <module>plugin-hosted</module>
-        <module>plugin-webhooks</module>
-        <module>plugin-bitbucket</module>
-        <module>plugin-github</module>
-        <module>plugin-microsoft</module>
-        <module>plugin-machine-authentication</module>
-        <module>plugin-product-info</module>
+        <module>websocket-terminal</module>
     </modules>
 </project>
