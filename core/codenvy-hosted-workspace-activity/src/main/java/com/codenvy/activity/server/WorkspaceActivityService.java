@@ -56,7 +56,6 @@ public class WorkspaceActivityService extends Service {
 
     @PUT
     @Path("/{wsId}")
-    @Consumes(APPLICATION_JSON)
     public void active(@PathParam("wsId") String wsId) throws ForbiddenException, NotFoundException, ServerException {
         final WorkspaceImpl workspace = workspaceManager.getWorkspace(wsId);
         if (!workspace.getNamespace().equals(EnvironmentContext.getCurrent().getUser().getId())) {
