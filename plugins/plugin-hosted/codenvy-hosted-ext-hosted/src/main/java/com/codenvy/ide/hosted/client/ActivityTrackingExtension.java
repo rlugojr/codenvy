@@ -53,7 +53,7 @@ public class ActivityTrackingExtension {
                           }
 
                           private native void init(String restContext, String wsId) /*-{
-                              $wnd.AT.init(restContext, wsId);
+                              $wnd.ActivityTracker.init(restContext, wsId);
                           }-*/;
                       })
                       .inject();

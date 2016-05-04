@@ -1,6 +1,5 @@
 /*
- *  [2012] - [2016]
- *  Codenvy, S.A.
+ *  [2012] - [2016] Codenvy, S.A.
  *  All Rights Reserved.
  *
  * NOTICE:  All information contained herein is, and remains
@@ -13,14 +12,17 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-var AT = new function () {
+var ActivityTracker = new function () {
 
     var url;
-    var timeout_interval = 10000;
+    var timeoutInterval = 10000;
+    var maxErrors = 5;
+    var active;
 
     this.init = function (restContext, workspaceId) {
         this.url = restContext + "/activity/" + workspaceId;
-        document.addEventListener("mousemove", AT.handleMouseMove);
+        ActivityTracker.initializeListeners();
+        ActivityTracker.active = true;
     };
 
     this.sendRequest = function () {
@@ -32,16 +34,31 @@ var AT = new function () {
         }
 
         request.onreadystatechange = function () {
-            if (request.readyState == 4 && request.status == 204) {
-                setTimeout(function() {document.addEventListener("mousemove", AT.handleMouseMove);}, timeout_interval);
+            if (request.readyState == 4) {
+                if (request.status != 204) {
+                    maxErrors--;
+                }
+
+                if (maxErrors > 0) {
+                    setTimeout(function () {
+                        ActivityTracker.active = true;
+                    }, timeoutInterval);
+                }
             }
         };
-        request.open("PUT", AT.url, true);
+        request.open("PUT", ActivityTracker.url, true);
         request.send();
     };
 
-    this.handleMouseMove = function(e) {
-        document.removeEventListener("mousemove", AT.handleMouseMove);
-        AT.sendRequest();
+    this.handleEvent = function (e) {
+        if (ActivityTracker.active) {
+            ActivityTracker.sendRequest();
+        }
+        ActivityTracker.active = false;
+    };
+
+    this.initializeListeners = function () {
+        document.addEventListener("mousemove", ActivityTracker.handleEvent);
+        document.addEventListener("keypress", ActivityTracker.handleEvent);
     };
 };
