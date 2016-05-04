@@ -21,7 +21,7 @@
   <md-toolbar class="flex-shrink-none">
     <md-progress-linear md-mode="indeterminate" ng-hide="codenvyNavbarCtrl.email"></md-progress-linear>
     <div ng-show="codenvyNavbarCtrl.email">
-      <section class="navbar-top-dropdown" layout="column" layout-align="center center">
+      <section class="navbar-top-dropdown" layout="column" layout-align="center left">
         <che-button-dropdown che-button-dropdown-href="#/create-project" che-button-dropdown-label="New Project"
                              che-button-dropdown-controller="codenvyNavbarCtrl"
                              ng-if="codenvyNavbarCtrl.isUser()"></che-button-dropdown>
@@ -123,53 +123,48 @@
       </div>
 
       <md-divider md-theme="factory-theme"></md-divider>
-      <div class="admin-navbar-menu"
-           ng-show="codenvyNavbarCtrl.profile.attributes && codenvyNavbarCtrl.isUser() && codenvyNavbarCtrl.isAccountServiceAvailable"
-           ng-init="isExpand=true">
-        <div class="navbar-identity"
-             flex layout="row" layout-align="start center" ng-click="isExpand=!isExpand">
-      <span flex layout="row" layout-align="start center" layout-padding>
-        <img class="developers-face" gravatar-src="codenvyNavbarCtrl.email">
-        <span flex class="navbar-title">{{codenvyNavbarCtrl.cheAPI.getProfile().getFullName(codenvyNavbarCtrl.profile.attributes)}}</span>
-      </span>
-          <i class="material-design md-tab-themed" ng-class="isExpand ? 'icon-ic_expand_less_24px' : 'icon-ic_expand_more_24px'">&nbsp;</i>
-        </div>
-        <section class="animation navbar-subsection"
-                 flex layout="column" layout-align="center start" layout-fill
-                 class="animation"
-                 ng-if="isExpand">
+
+      <div class="admin-navbar-menu">
+        <section class="left-sidebar-menu" layout="column" layout-align="center center">
           <md-list layout="column" flex>
             <md-list-item flex class="navbar-subsection-item">
+              <div flex layout-align="left">
+                <div class="navbar-item navbar-identity" layout="row" layout-align="start center">
+                  <i> <img class="developers-face" gravatar-src="codenvyNavbarCtrl.email"/> </i>
+                  <span>{{codenvyNavbarCtrl.cheAPI.getProfile().getFullName(codenvyNavbarCtrl.profile.attributes)}}</span>
+                </div>
+              </div>
+            </md-list-item>
+            <md-list-item flex class="navbar-subsection-item">
               <md-button nav-bar-selected flex che-reload-href ng-href="{{codenvyNavbarCtrl.menuItemUrl.account}}" layout-align="left">
-                <div class="navbar-item" layout="row"
-                     layout-align="start center">Account
+                <div class="navbar-item navbar-item-no-icon" layout="row" layout-align="start center">Account
                 </div>
               </md-button>
             </md-list-item>
             <md-list-item flex class="navbar-subsection-item" ng-if="!codenvyNavbarCtrl.ims.isAvailable">
               <md-button nav-bar-selected flex che-reload-href ng-href="{{codenvyNavbarCtrl.menuItemUrl.team}}" layout-align="left">
-                <div class="navbar-item" layout="row"
-                     layout-align="start center">Team
+                <div class="navbar-item navbar-item-no-icon" layout="row" layout-align="start center">Team
                 </div>
               </md-button>
             </md-list-item>
             <md-list-item flex class="navbar-subsection-item" ng-if="codenvyNavbarCtrl.isSubscriptionServiceAvailable">
               <md-button nav-bar-selected flex che-reload-href ng-href="{{codenvyNavbarCtrl.menuItemUrl.subscriptions}}"
                          layout-align="left">
-                <div class="navbar-item" layout="row" layout-align="start center">Subscriptions
+                <div class="navbar-item navbar-item-no-icon" layout="row" layout-align="start center">Subscriptions
                 </div>
               </md-button>
             </md-list-item>
             <md-list-item flex class="navbar-subsection-item"
                           ng-if="!codenvyNavbarCtrl.ims.isAvailable && codenvyNavbarCtrl.isInvoiceServiceAvailable">
               <md-button nav-bar-selected flex che-reload-href ng-href="{{codenvyNavbarCtrl.menuItemUrl.billing}}" layout-align="left">
-                <div class="navbar-item" layout="row" layout-align="start center">Billing and Invoices
+                <div class="navbar-item navbar-item-no-icon" layout="row" layout-align="start center">Billing and Invoices
                 </div>
               </md-button>
             </md-list-item>
           </md-list>
         </section>
       </div>
+
       <md-divider md-theme="factory-theme" ng-show="codenvyNavbarCtrl.isUser()"></md-divider>
       <section class="left-sidebar-menu" layout="column" layout-align="center center">
         <md-list layout="row" layout-align="start center">
