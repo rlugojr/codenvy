@@ -108,6 +108,8 @@ export class CodenvyNavBarCtrl {
         };
       }
     });
+
+    cheAPI.cheWorkspace.fetchWorkspaces();
   }
 
   reload() {
@@ -127,5 +129,9 @@ export class CodenvyNavBarCtrl {
 
   isUser() {
     return this.cheUser.isUser();
+  }
+
+  getWorkspacesNumber() {
+    return this.cheAPI.cheWorkspace.getWorkspaces().length;
   }
 }
