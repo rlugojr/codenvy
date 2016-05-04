@@ -15,17 +15,24 @@
 var ActivityTracker = new function () {
 
     var url;
-    var timeoutInterval = 10000;
+    var timeoutInterval = 1000;
     var maxErrors = 5;
     var active;
 
     this.init = function (restContext, workspaceId) {
         this.url = restContext + "/activity/" + workspaceId;
-        ActivityTracker.initializeListeners();
-        ActivityTracker.active = true;
+        document.addEventListener("mousemove", function(){  if (!active && maxErrors > 0) active = true; });
+        document.addEventListener("keypress", function(){  if (!active && maxErrors > 0) active = true; });
+        setInterval(ActivityTracker.sendRequest, timeoutInterval);
     };
 
+
     this.sendRequest = function () {
+        if (!active) {
+            return;
+        }
+        active = false;
+
         var request;
         if (window.XMLHttpRequest) {
             request = new XMLHttpRequest();
@@ -39,26 +46,10 @@ var ActivityTracker = new function () {
                     maxErrors--;
                 }
 
-                if (maxErrors > 0) {
-                    setTimeout(function () {
-                        ActivityTracker.active = true;
-                    }, timeoutInterval);
-                }
             }
         };
         request.open("PUT", ActivityTracker.url, true);
         request.send();
     };
 
-    this.handleEvent = function (e) {
-        if (ActivityTracker.active) {
-            ActivityTracker.sendRequest();
-            ActivityTracker.active = false;
-        }
-    };
-
-    this.initializeListeners = function () {
-        document.addEventListener("mousemove", ActivityTracker.handleEvent);
-        document.addEventListener("keypress", ActivityTracker.handleEvent);
-    };
 };
