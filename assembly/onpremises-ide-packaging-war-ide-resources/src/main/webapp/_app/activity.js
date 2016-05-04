@@ -53,8 +53,8 @@ var ActivityTracker = new function () {
     this.handleEvent = function (e) {
         if (ActivityTracker.active) {
             ActivityTracker.sendRequest();
+            ActivityTracker.active = false;
         }
-        ActivityTracker.active = false;
     };
 
     this.initializeListeners = function () {
