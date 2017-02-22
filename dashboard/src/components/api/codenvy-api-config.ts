@@ -21,6 +21,7 @@ import {CodenvyLicense} from './codenvy-license.factory';
 import {CodenvyPermissions} from './codenvy-permissions.factory';
 import {CodenvySystem} from './codenvy-system.factory';
 import {CodenvyTeam} from './codenvy-team.factory';
+import {CodenvyTeamEventsManager} from './codenvy-team-events-manager.factory';
 import {CodenvyResourcesDistribution} from './codenvy-resources-distribution.factory';
 import {CodenvyFactoryTemplate} from './codenvy-factory-template.factory';
 import {CodenvyAPIBuilder} from './builder/codenvy-api-builder.factory';
@@ -40,6 +41,7 @@ export class CodenvyApiConfig {
     register.factory('codenvyLicense', CodenvyLicense);
     register.factory('codenvySystem', CodenvySystem);
     register.factory('codenvyTeam', CodenvyTeam);
+    register.factory('codenvyTeamEventsManager', CodenvyTeamEventsManager);
     register.factory('codenvyFactoryTemplate', CodenvyFactoryTemplate);
     register.factory('codenvyAPI', CodenvyAPI);
     register.factory('codenvyAPIBuilder', CodenvyAPIBuilder);

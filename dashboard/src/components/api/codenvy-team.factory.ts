@@ -15,6 +15,7 @@
 'use strict';
 
 import {CodenvyTeamRoles} from './codenvy-team-roles';
+import {CodenvyTeamEventsManager} from './codenvy-team-events-manager.factory';
 import {CodenvyUser} from './codenvy-user.factory';
 
 interface ITeamsResource<T> extends ng.resource.IResourceClass<T> {
@@ -55,6 +56,10 @@ export class CodenvyTeam {
    */
   private codenvyUser : CodenvyUser;
   /**
+   * The Codenvy Team notifications.
+   */
+  teamEventsManager: CodenvyTeamEventsManager;
+  /**
    * User's personal account.
    */
   private personalAccount: any;
@@ -71,12 +76,14 @@ export class CodenvyTeam {
    * Default constructor that is using resource
    * @ngInject for Dependency injection
    */
-  constructor($resource: ng.resource.IResourceService, $q: ng.IQService, lodash: any, cheNamespaceRegistry: any, codenvyUser: CodenvyUser) {
+  constructor($resource: ng.resource.IResourceService, $q: ng.IQService, lodash: any, cheNamespaceRegistry: any, codenvyUser: CodenvyUser,
+              codenvyTeamEventsManager: CodenvyTeamEventsManager) {
     this.$resource = $resource;
     this.$q = $q;
     this.lodash = lodash;
     this.cheNamespaceRegistry = cheNamespaceRegistry;
     this.codenvyUser = codenvyUser;
+    this.teamEventsManager = codenvyTeamEventsManager;
 
     this.remoteTeamAPI = <ITeamsResource<any>>$resource('/api/organization', {}, {
       getTeams: {method: 'GET', url: '/api/organization', isArray: true},
@@ -90,6 +97,14 @@ export class CodenvyTeam {
     this.fetchTeamsDefer = this.$q.defer();
     const fetchTeamsPromise = this.fetchTeamsDefer.promise;
     this.cheNamespaceRegistry.setFetchPromise(fetchTeamsPromise);
+
+    this.teamEventsManager.addRenameHandler(() => {
+      this.fetchTeams();
+    });
+
+    this.teamEventsManager.addDeleteHandler(() => {
+      this.fetchTeams();
+    });
   }
 
   /**
@@ -152,6 +167,7 @@ export class CodenvyTeam {
       // team has to have parent (root organizations are skipped):
       if (team.parent) {
         this.teams.push(team);
+        this.teamEventsManager.subscribeTeamNotifications(team.id);
       }
     });
 
