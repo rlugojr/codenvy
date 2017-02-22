@@ -86,6 +86,7 @@ public class SystemLicenseLoginFilter implements Filter {
     @Named(FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_ERROR_PAGE_URL)
     protected String                 fairSourceLicenseIsNotAcceptedErrorPageUrl;
 
+    private boolean fairSourceLicenseNotAccepted = true;
 
     @Override
     public void init(FilterConfig config) throws ServletException {
@@ -148,15 +149,20 @@ public class SystemLicenseLoginFilter implements Filter {
                                                      ConflictException,
                                                      NotFoundException,
                                                      ServerException, UnauthorizedException {
-        LegalityDto legality = requestFactory.fromUrl(UriBuilder.fromUri(apiEndpoint)
-                                                                .path(SystemLicenseService.class)
-                                                                .path(SystemLicenseService.class,
-                                                                      "isSystemUsageLegal").build().toString())
-                                             .useGetMethod()
-                                             .request()
-                                             .asDto(LegalityDto.class);
+        if (fairSourceLicenseNotAccepted) {
+            LegalityDto legality = requestFactory.fromUrl(UriBuilder.fromUri(apiEndpoint)
+                                                                    .path(SystemLicenseService.class)
+                                                                    .path(SystemLicenseService.class,
+                                                                          "isSystemUsageLegal").build().toString())
+                                                 .useGetMethod()
+                                                 .request()
+                                                 .asDto(LegalityDto.class);
 
-        return legality.getIssues().stream().anyMatch(issue -> issue.getStatus().equals(FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED));
+            fairSourceLicenseNotAccepted = legality.getIssues()
+                                                   .stream()
+                                                   .anyMatch(issue -> issue.getStatus().equals(FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED));
+        }
+        return fairSourceLicenseNotAccepted;
     }
 
     @Override
