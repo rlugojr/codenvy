@@ -20,15 +20,15 @@ import com.google.inject.multibindings.Multibinder;
 import org.eclipse.che.inject.DynaModule;
 
 /**
- * Setup ProjectLockerOAuthAuthenticator in guice container.
+ * Setup LinkedInOAuthAuthenticator in guice container.
  *
  * @author Max Shaposhnik
  */
 @DynaModule
-public class ProjectLockerModule extends AbstractModule {
+public class LinkedInModule extends AbstractModule {
     @Override
     protected void configure() {
         Multibinder<OAuthAuthenticator> oAuthAuthenticators = Multibinder.newSetBinder(binder(), OAuthAuthenticator.class);
-        oAuthAuthenticators.addBinding().to(ProjectLockerOAuthAuthenticator.class);
+        oAuthAuthenticators.addBinding().to(LinkedInOAuthAuthenticator.class);
     }
 }

@@ -90,7 +90,9 @@
                         break;
                     case "redhat":
                         scope = "scope=user";
-                        
+                    case "linkedin":
+                        scope = "scope=r_basicprofile r_emailaddress";
+                        break;
                 }
                 oauthUrl = oauthUrl + scope + redirectAfterLogin;
                 if (typeof callback !== 'undefined') {

@@ -15,27 +15,17 @@
     from Codenvy S.A..
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>onpremises-assembly-parent</artifactId>
-        <groupId>com.codenvy.onpremises</groupId>
+        <artifactId>codenvy-plugin-parent</artifactId>
+        <groupId>com.codenvy.plugin</groupId>
         <version>5.4.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <groupId>com.codenvy.onpremises</groupId>
-    <artifactId>onpremises-ide-parent</artifactId>
-    <version>5.4.0-SNAPSHOT</version>
+    <artifactId>codenvy-plugin-linkedin-parent</artifactId>
     <packaging>pom</packaging>
-    <name>Onpremises IDE :: Parent</name>
     <modules>
-        <module>assembly-website-war</module>
-        <module>assembly-factory-war</module>
-        <module>assembly-wsmaster-war</module>
-        <module>assembly-dashboard-war</module>
-        <module>assembly-ide-war</module>
-        <module>assembly-wsagent-war</module>
-        <module>assembly-wsagent-server</module>
-        <module>assembly-main</module>
+        <module>codenvy-plugin-linkedin-oauth2</module>
     </modules>
 </project>
