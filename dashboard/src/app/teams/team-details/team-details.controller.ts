@@ -20,6 +20,8 @@ import {CodenvyPermissions} from '../../../components/api/codenvy-permissions.fa
 import {CodenvyUser} from '../../../components/api/codenvy-user.factory';
 import {CodenvyTeamEventsManager} from '../../../components/api/codenvy-team-events-manager.factory';
 
+enum Tab {Settings, Members, Workspaces}
+
 /**
  * Controller for a managing team details.
  *
@@ -103,6 +105,8 @@ export class TeamDetailsController {
    */
   private isLoading: boolean;
 
+  private teamForm: ng.IFormController;
+
   /**
    * Default constructor that is using resource injection
    * @ngInject for Dependency injection
@@ -129,16 +133,16 @@ export class TeamDetailsController {
     if (!page) {
       $location.path('/team/' + this.teamName);
     } else {
-      this.selectedTabIndex = 0;
+      this.selectedTabIndex = Tab.Settings;
       switch (page) {
         case 'settings':
-          this.selectedTabIndex = 0;
+          this.selectedTabIndex = Tab.Settings;
           break;
         case 'developers':
-          this.selectedTabIndex = 1;
+          this.selectedTabIndex = Tab.Members;
           break;
         case 'workspaces':
-          this.selectedTabIndex = 2;
+          this.selectedTabIndex = Tab.Workspaces;
           break;
         default:
           $location.path('/team/' + this.teamName);
@@ -315,10 +319,9 @@ export class TeamDetailsController {
   /**
    * Update team's details.
    *
-   * @param invalid <true> if invalid data entered
    */
-  updateTeamName(invalid: boolean): void {
-    if (!invalid && this.newName && this.team && this.newName !== this.team.name) {
+  updateTeamName(): void {
+    if (this.newName && this.team && this.newName !== this.team.name) {
       this.team.name = this.newName;
       this.codenvyTeam.updateTeam(this.team).then((team) => {
         this.codenvyTeam.fetchTeams().then(() => {
@@ -333,11 +336,9 @@ export class TeamDetailsController {
   /**
    * Update resource limits.
    *
-   * @param invalid is form invalid
-   * @param type type of the changed resource
    */
-  updateLimits(invalid: boolean, type: CodenvyResourceLimits): void {
-    if (invalid || !this.team || !this.limits || angular.equals(this.limits, this.limitsCopy)) {
+  updateLimits(): void {
+    if (!this.team || !this.limits || angular.equals(this.limits, this.limitsCopy)) {
       return;
     }
 
@@ -373,54 +374,38 @@ export class TeamDetailsController {
     this.codenvyResourcesDistribution.distributeResources(this.team.id, resources).then(() => {
       this.fetchLimits();
     }, (error: any) => {
-      let resource = '';
-      let value;
-      switch (type) {
-        case CodenvyResourceLimits.RAM:
-          resource = 'workspace RAM cap';
-          value = this.limits.ramCap;
-          break;
-        case CodenvyResourceLimits.WORKSPACE:
-          resource = 'workspace cap';
-          value = this.limits.workspaceCap;
-          break;
-        case CodenvyResourceLimits.RUNTIME:
-          resource = 'running workspaces cap';
-          value = this.limits.runtimeCap;
-          break;
-      }
-
-      let errorMessage = 'Failed to set ' + resource + ' to ' + value + '.';
+      let errorMessage = 'Failed to set update team CAPs.';
       this.cheNotification.showError((error.data && error.data.message !== null) ? errorMessage + '</br>Reason: ' + error.data.message : errorMessage);
-
       this.fetchLimits();
     });
   }
 
   /**
-   * Returns the RAM resource type.
+   * Returns whether save button is disabled.
    *
-   * @returns {CodenvyResourceLimits} the RAM resource type
+   * @return {boolean}
    */
-  getRAMResourceType(): CodenvyResourceLimits {
-    return CodenvyResourceLimits.RAM;
+  isSaveButtonDisabled(): boolean {
+    return this.teamForm && this.teamForm.$invalid;
   }
 
   /**
-   * Returns the workspace resource type.
+   * Returns true if "Save" button should be visible
    *
-   * @returns {CodenvyResourceLimits} the workspace resource type
+   * @return {boolean}
    */
-  getWorkspaceResourceType(): CodenvyResourceLimits {
-    return CodenvyResourceLimits.WORKSPACE;
+  isSaveButtonVisible(): boolean {
+    return (this.selectedTabIndex === Tab.Settings && !this.isLoading) && (!angular.equals(this.team.name, this.newName) ||
+      !angular.equals(this.limits, this.limitsCopy));
   }
 
-  /**
-   * Returns the workspace runtime resource type.
-   *
-   * @returns {CodenvyResourceLimits} the workspace runtime resource type
-   */
-  getRuntimeResourceType(): CodenvyResourceLimits {
-    return CodenvyResourceLimits.RUNTIME;
+  updateTeam(): void {
+    this.updateTeamName();
+    this.updateLimits();
+  }
+
+  cancelChanges(): void {
+    this.newName = angular.copy(this.team.name);
+    this.limits = angular.copy(this.limitsCopy);
   }
 }

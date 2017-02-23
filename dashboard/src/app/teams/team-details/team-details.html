@@ -18,6 +18,12 @@
 
 -->
 <che-toolbar che-title="{{teamDetailsController.teamName}}" ng-if="!teamDetailsController.invalidTeam">
+  <div class="save-button-placeholder">
+    <che-button-save-flat ng-show="teamDetailsController.isSaveButtonVisible()"
+                          ng-disabled="teamDetailsController.isSaveButtonDisabled()"
+                          che-button-title="Save" name="saveButton"
+                          ng-click="teamDetailsController.updateTeam()"></che-button-save-flat>
+  </div>
 </che-toolbar>
 <md-content md-scroll-y flex md-theme="default" ng-if="!teamDetailsController.invalidTeam">
   <md-tabs md-dynamic-height md-stretch-tabs="auto"
@@ -35,10 +41,10 @@
           <md-progress-linear md-mode="indeterminate" ng-show="teamDetailsController.isLoading"></md-progress-linear>
         </div>
         <div flex layout="column"class="team-details-content">
-          <ng-form name="teamForm">
+          <ng-form name="teamDetailsController.teamForm">
             <!-- Name -->
           <che-label-container che-label-name="Name">
-                  <che-input-box che-form="teamForm"
+                  <che-input-box che-form="teamDetailsController.teamForm"
                                  che-name="name"
                                  aria-label="Name of the team"
                                  che-place-holder="Name of the team"
@@ -46,8 +52,6 @@
                                  che-readonly="!teamDetailsController.isUserAllowedTo('update')"
                                  unique-team-name="teamDetailsController.team.name"
                                  parent-account="teamDetailsController.owner.name"
-                                 ng-change="teamDetailsController.updateTeamName(teamForm.$invalid)"
-                                 ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 1000, 'blur': 0 } }"
                                  required
                                  ng-maxlength="20"
                                  ng-pattern="/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i">
@@ -67,13 +71,11 @@
 
           <!-- Workspace cap -->
           <che-label-container che-label-name="Workspace Cap" che-label-description="Maximum number of workspaces for the team.">
-            <che-input-box che-name="workspaceCap" che-form="teamForm"
+            <che-input-box che-name="workspaceCap" che-form="teamDetailsController.teamForm"
                            aria-label="workspace cap"
                            che-place-holder="Total number of workspaces has not been limited."
                            ng-model="teamDetailsController.limits.workspaceCap"
-                           ng-change="teamDetailsController.updateLimits(teamForm.$invalid, teamDetailsController.getWorkspaceResourceType())"
                            che-readonly="!teamDetailsController.canChangeResourceLimits()"
-                           ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 2000, 'blur': 0 } }"
                            type="number"
                            min="0">
               <div ng-message="required">A workspace cap is required.</div>
@@ -83,13 +85,11 @@
 
           <!-- Running workspace cap -->
           <che-label-container che-label-name="Running Workspace Cap" che-label-description="Maximum number of running workspaces for each team.">
-            <che-input-box che-name="runtimeCap" che-form="teamForm"
+            <che-input-box che-name="runtimeCap" che-form="teamDetailsController.teamForm"
                            aria-label="runtime cap"
                            che-place-holder="Number of running workspaces has not been limited."
                            ng-model="teamDetailsController.limits.runtimeCap"
-                           ng-change="teamDetailsController.updateLimits(teamForm.$invalid, teamDetailsController.getRuntimeResourceType())"
                            che-readonly="!teamDetailsController.canChangeResourceLimits()"
-                           ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 2000, 'blur': 0 } }"
                            type="number"
                            min="0">
               <div ng-message="required">A running workspace cap is required.</div>
@@ -99,13 +99,11 @@
           <!-- Workspace RAM cap -->
           <che-label-container che-label-name="Workspace RAM Cap" class="team-ram-cap"
                                che-label-description="Maximum RAM a singe workspace can use.">
-            <che-input-box che-name="workspaceRamCap" che-form="teamForm"
+            <che-input-box che-name="workspaceRamCap" che-form="teamDetailsController.teamForm"
                            aria-label="runtime cap"
                            che-place-holder="Workspace RAM has not been limited."
                            ng-model="teamDetailsController.limits.ramCap"
-                           ng-change="teamDetailsController.updateLimits(teamForm.$invalid, teamDetailsController.getRAMResourceType())"
                            che-readonly="!teamDetailsController.canChangeResourceLimits()"
-                           ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 2000, 'blur': 0 } }"
                            type="number"
                            min="0">
               <div ng-message="min">A workspace RAM cap should be greater than 0.</div>
@@ -178,3 +176,9 @@
   </div>
 
 </md-content>
+
+
+<workspace-edit-mode-overlay ng-if="teamDetailsController.isSaveButtonVisible()"
+                             workspace-edit-disable-save-button="teamDetailsController.isSaveButtonDisabled()"
+                             workspace-edit-mode-on-save="teamDetailsController.updateTeam()"
+                             workspace-edit-mode-on-cancel="teamDetailsController.cancelChanges()"></workspace-edit-mode-overlay>

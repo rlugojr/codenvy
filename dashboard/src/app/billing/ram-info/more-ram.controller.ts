@@ -202,7 +202,8 @@ export class MoreRamController {
     this.partialPrice = ramResource.partialPrice;
     this.amount = ramResource.amount / 1000 + 'GB';
     this.minValue = ramResource.minAmount / 1000;
-    this.maxValue = ramResource.maxAmount / 1000;
+    let paidRAM = this.totalRAM - this.freeRAM;
+    this.maxValue = ramResource.maxAmount / 1000 - paidRAM;
     this.value = angular.copy(this.minValue);
     this.timeout = timeoutResource ? timeoutResource.amount / 60 : 4;
   }
