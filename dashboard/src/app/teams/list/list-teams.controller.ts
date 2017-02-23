@@ -16,7 +16,8 @@
 import {CodenvyTeam} from '../../../components/api/codenvy-team.factory';
 import {CodenvyPermissions} from '../../../components/api/codenvy-permissions.factory';
 import {CodenvyResourcesDistribution} from '../../../components/api/codenvy-resources-distribution.factory';
-import {CodenvyResourceLimits} from "../../../components/api/codenvy-resource-limits";
+import {CodenvyResourceLimits} from '../../../components/api/codenvy-resource-limits';
+import {CodenvyTeamEventsManager} from '../../../components/api/codenvy-team-events-manager.factory';
 
 /**
  * @ngdoc controller
@@ -30,6 +31,10 @@ export class ListTeamsController {
    * Team API interaction.
    */
   private codenvyTeam: CodenvyTeam;
+  /**
+   * Team events manager.
+   */
+  private codenvyTeamEventsManager: CodenvyTeamEventsManager;
   /**
    * Permissions API interaction.
    */
@@ -92,9 +97,11 @@ export class ListTeamsController {
    * @ngInject for Dependency injection
    */
   constructor(codenvyTeam: CodenvyTeam, codenvyPermissions: CodenvyPermissions, codenvyResourcesDistribution: CodenvyResourcesDistribution,
-              cheNotification: any, confirmDialogService: any, $q: ng.IQService, $location: ng.ILocationService) {
+              cheNotification: any, codenvyTeamEventsManager: CodenvyTeamEventsManager, confirmDialogService: any, $scope: ng.IScope,
+              $q: ng.IQService, $location: ng.ILocationService) {
     this.codenvyTeam = codenvyTeam;
     this.codenvyPermissions = codenvyPermissions;
+    this.codenvyTeamEventsManager = codenvyTeamEventsManager;
     this.codenvyResourcesDistribution = codenvyResourcesDistribution;
 
     this.cheNotification = cheNotification;
@@ -109,6 +116,19 @@ export class ListTeamsController {
     this.isBulkChecked = false;
     this.isNoSelected = true;
     this.fetchTeams();
+
+
+    let refreshHandler = () => {
+      this.fetchTeams();
+    };
+
+    this.codenvyTeamEventsManager.addDeleteHandler(refreshHandler);
+    this.codenvyTeamEventsManager.addRenameHandler(refreshHandler);
+
+    $scope.$on('$destroy', () => {
+      this.codenvyTeamEventsManager.removeRenameHandler(refreshHandler);
+      this.codenvyTeamEventsManager.removeDeleteHandler(refreshHandler);
+    });
   }
 
   /**

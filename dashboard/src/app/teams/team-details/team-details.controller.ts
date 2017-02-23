@@ -18,6 +18,7 @@ import {CodenvyResourcesDistribution} from '../../../components/api/codenvy-reso
 import {CodenvyResourceLimits} from '../../../components/api/codenvy-resource-limits';
 import {CodenvyPermissions} from '../../../components/api/codenvy-permissions.factory';
 import {CodenvyUser} from '../../../components/api/codenvy-user.factory';
+import {CodenvyTeamEventsManager} from '../../../components/api/codenvy-team-events-manager.factory';
 
 /**
  * Controller for a managing team details.
@@ -29,6 +30,10 @@ export class TeamDetailsController {
    * Team API interaction.
    */
   private codenvyTeam: CodenvyTeam;
+  /**
+   * Team events manager.
+   */
+  private codenvyTeamEventsManager: CodenvyTeamEventsManager;
   /**
    * Team resources API interaction.
    */
@@ -103,11 +108,12 @@ export class TeamDetailsController {
    * @ngInject for Dependency injection
    */
   constructor(codenvyTeam: CodenvyTeam, codenvyResourcesDistribution: CodenvyResourcesDistribution, codenvyPermissions: CodenvyPermissions,
-              codenvyUser: CodenvyUser, $route: ng.route.IRouteService, $location: ng.ILocationService, $rootScope: che.IRootScopeService,
-              confirmDialogService: any, cheNotification: any, lodash: any) {
+              codenvyUser: CodenvyUser, $route: ng.route.IRouteService, $location: ng.ILocationService, $rootScope: che.IRootScopeService, $scope: ng.IScope,
+              confirmDialogService: any, codenvyTeamEventsManager: CodenvyTeamEventsManager, cheNotification: any, lodash: any) {
     this.codenvyTeam = codenvyTeam;
     this.codenvyResourcesDistribution = codenvyResourcesDistribution;
     this.codenvyPermissions = codenvyPermissions;
+    this.codenvyTeamEventsManager = codenvyTeamEventsManager;
     this.codenvyUser = codenvyUser;
     this.teamName = $route.current.params.teamName;
     this.$location = $location;
@@ -139,6 +145,25 @@ export class TeamDetailsController {
           break;
       }
     }
+
+    let deleteHandler = (info: any) => {
+      if (this.team && (this.team.id === info.organization.id)) {
+        this.$location.path('/workspaces');
+      }
+    };
+    this.codenvyTeamEventsManager.addDeleteHandler(deleteHandler);
+
+    let renameHandler = (info: any) => {
+      if (this.team && (this.team.id === info.organization.id)) {
+        this.$location.path('/team/' + info.organization.qualifiedName);
+      }
+    };
+    this.codenvyTeamEventsManager.addRenameHandler(renameHandler);
+
+    $scope.$on('$destroy', () => {
+      this.codenvyTeamEventsManager.removeRenameHandler(renameHandler);
+      this.codenvyTeamEventsManager.removeDeleteHandler(deleteHandler);
+    });
 
     this.fetchTeamDetails();
     this.fetchUser();
