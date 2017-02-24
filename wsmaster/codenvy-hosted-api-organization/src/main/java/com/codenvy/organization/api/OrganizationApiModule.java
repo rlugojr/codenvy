@@ -16,6 +16,7 @@ package com.codenvy.organization.api;
 
 import com.codenvy.api.permission.server.SuperPrivilegesChecker;
 import com.codenvy.api.permission.shared.model.PermissionsDomain;
+import com.codenvy.organization.api.listener.MemberEventsPublisher;
 import com.codenvy.organization.api.listener.RemoveOrganizationOnLastUserRemovedEventSubscriber;
 import com.codenvy.organization.api.permissions.OrganizationDomain;
 import com.codenvy.organization.api.permissions.OrganizationPermissionsFilter;
@@ -63,7 +64,12 @@ public class OrganizationApiModule extends AbstractModule {
         bind(OrganizationResourcesDistributionService.class);
         bind(OrganizationResourceDistributionServicePermissionsFilter.class);
 
-        Multibinder.newSetBinder(binder(), PermissionsDomain.class, Names.named(SuperPrivilegesChecker.SUPER_PRIVILEGED_DOMAINS))
+        bind(com.codenvy.organization.api.listener.OrganizationEventsWebsocketBroadcaster.class).asEagerSingleton();
+        bind(com.codenvy.organization.api.listener.OrganizationNotificationEmailSender.class).asEagerSingleton();
+        bind(MemberEventsPublisher.class).asEagerSingleton();
+
+        Multibinder.newSetBinder(binder(), PermissionsDomain.class,
+                                 Names.named(SuperPrivilegesChecker.SUPER_PRIVILEGED_DOMAINS))
                    .addBinding().to(OrganizationDomain.class);
     }
 }
