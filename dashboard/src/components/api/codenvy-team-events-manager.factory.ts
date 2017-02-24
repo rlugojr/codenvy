@@ -37,7 +37,7 @@ export class CodenvyTeamEventsManager {
    * Default constructor that is using resource
    * @ngInject for Dependency injection
    */
-  constructor(cheWebsocket: any, applicationNotifications: any, $log, codenvyUser: CodenvyUser) {
+  constructor(cheWebsocket: any, applicationNotifications: any, $log: ng.ILogService, codenvyUser: CodenvyUser) {
     this.codenvyUser = codenvyUser;
     this.cheWebsocket = cheWebsocket;
     this.applicationNotifications = applicationNotifications;
@@ -73,6 +73,7 @@ export class CodenvyTeamEventsManager {
           break;
       }
     });
+
   }
 
   /**
@@ -170,16 +171,18 @@ export class CodenvyTeamEventsManager {
    */
   processDeleteMember(info: any): void {
     let isCurrentUserInitiator = this.isCurrentUser(info.performerName);
-    let isCurrentUserDeleted = (info.removedUserId === this.codenvyUser.getUser().id);
+    let isCurrentUserDeleted = (info.removedUser.id === this.codenvyUser.getUser().id);
     if (isCurrentUserInitiator) {
       //TODO
     } else {
       let title = isCurrentUserDeleted ? 'You have been removed from team' : 'Member have been removed from team';
-      let content = isCurrentUserDeleted ? info.performerName + ' removed you from team called ' + '.'
-        : info.performerName + ' removed member from team called ' + '.'; //TODO
+      let content = isCurrentUserDeleted ? info.performerName + ' removed you from team called \"' + info.organization.qualifiedName +'\".'
+        : info.performerName + ' removed user ' + info.removedUser.name + ' ('+ info.removedUser.email + ') from team called \"' + info.organization.qualifiedName +'\".';
       this.applicationNotifications.addInfoNotification(title, content);
 
-      this.unSubscribeTeamNotifications(info.organization.id);
+      if (isCurrentUserDeleted) {
+        this.unSubscribeTeamNotifications(info.organization.id);
+      }
 
       this.deleteHandlers.forEach((handler: Function) => {
         handler(info);
