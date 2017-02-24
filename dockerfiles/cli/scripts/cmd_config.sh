@@ -74,7 +74,7 @@ generate_configuration_with_puppet() {
   fi
 
   if [[ local_assembly && -f $(echo ${CHE_CONTAINER_ASSEMBLY_FULL_PATH}/lib/${WS_AGENT_ASSEMBLY}) ]]; then
-    info "Using ws-agent from main assembly"
+    info "config" "Using ws-agent from main assembly"
     WRITE_PARAMETERS+=" -e \"PATH_TO_WS_AGENT_ASSEMBLY=${CHE_HOST_INSTANCE}/dev/codenvy-tomcat/lib/${WS_AGENT_ASSEMBLY}\""
   fi
 
