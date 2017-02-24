@@ -200,10 +200,10 @@ export class MoreRamController {
 
     this.price = ramResource.fullPrice;
     this.partialPrice = ramResource.partialPrice;
-    this.amount = ramResource.amount / 1000 + 'GB';
-    this.minValue = ramResource.minAmount / 1000;
+    this.amount = ramResource.amount / 1024 + 'GB';
+    this.minValue = ramResource.minAmount / 1024;
     let paidRAM = this.totalRAM - this.freeRAM;
-    this.maxValue = ramResource.maxAmount / 1000 - paidRAM;
+    this.maxValue = ramResource.maxAmount / 1024 - paidRAM;
     this.value = angular.copy(this.minValue);
     this.timeout = timeoutResource ? timeoutResource.amount / 60 : 4;
   }
@@ -279,7 +279,7 @@ export class MoreRamController {
    * @param subscription
    */
   processSubscription(subscription: any): void {
-    let ramValue = this.value * 1000;
+    let ramValue = this.value * 1024;
 
     let promise;
     // check subscription exists:

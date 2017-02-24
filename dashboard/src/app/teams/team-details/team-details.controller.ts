@@ -292,7 +292,7 @@ export class TeamDetailsController {
     this.limits = {};
     this.limits.workspaceCap = workspaceLimit ? workspaceLimit.amount : undefined;
     this.limits.runtimeCap = runtimeLimit ? runtimeLimit.amount : undefined;
-    this.limits.ramCap = ramLimit ? ramLimit.amount / 1000 : undefined;
+    this.limits.ramCap = ramLimit ? ramLimit.amount / 1024 : undefined;
     this.limitsCopy = angular.copy(this.limits);
   }
 
@@ -352,7 +352,7 @@ export class TeamDetailsController {
     resources = angular.copy(resources);
 
     if (this.limits.ramCap) {
-      resources = this.codenvyResourcesDistribution.setTeamResourceLimitByType(resources, CodenvyResourceLimits.RAM, (this.limits.ramCap * 1000));
+      resources = this.codenvyResourcesDistribution.setTeamResourceLimitByType(resources, CodenvyResourceLimits.RAM, (this.limits.ramCap * 1024));
     }
 
     if (this.limits.workspaceCap) {

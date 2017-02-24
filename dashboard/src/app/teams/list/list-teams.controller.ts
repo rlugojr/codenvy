@@ -217,7 +217,7 @@ export class ListTeamsController {
   getRamCap(teamId: string): any {
     if (this.teamResources && this.teamResources.size > 0) {
       let ram = this.teamResources.get(teamId);
-      return ram ? (ram / 1000) : null;
+      return ram ? (ram / 1024) : null;
     }
     return null;
   }
